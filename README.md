@@ -1,61 +1,166 @@
-# CodeIgniter 4 Framework
+# CRUD-project-
+CRUD project with REST API using CodeIgniter 4 Framework
+## 📌 Project Overview
+This project is a **RESTful API** built using **CodeIgniter 4** to perform CRUD operations (Create, Read, Update, Delete) on users table.  
+Users can be created, retrieved, updated, and deleted. Passwords are stored securely using hashing. The API supports JSON payloads for PUT requests and standard query parameters for GET and DELETE.
 
-## What is CodeIgniter?
+## ⚙️ Technologies Used
+- PHP 
+- CodeIgniter 4 Framework  
+- MySQL   
+- Postman (for API testing)
+## Installation 
+1.Download CodeIgniter 4
+Download the framework from the official site:
+https://codeigniter.com/download
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+2.Extract to your local server directory
+For XAMPP, for example:
+- C:\xampp\htdocs\codeigniter4-rest-api
 
-This repository holds the distributable version of the framework.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+3.Create Controller and Model using PHP Spark CLI
+Open your terminal or command prompt, navigate to your project folder, and run:
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+- php spark make:controller UserController
+- php spark make:model UserModel
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+This will generate UserController.php in app/Controllers/
+And UserModel.php in app/Models/
 
-## Important Change with index.php
+4.Using user table which was already create in csci6040_study Database.
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+5.Configure database in .env and set your database settings:
+- database.default.hostname = localhost
+- database.default.database = csci6040_study
+- database.default.username = root
+- database.default.password = 
+- database.default.DBDriver = MySQLi
+- database.default.DBPrefix =
+- database.default.port = 3306
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+ CodeIgniter automatically uses these .env settings for database connections. 
+ 
+6.Run the project using PHP Spark
 
-**Please** read the user guide for a better explanation of how CI4 works!
+Open your terminal in your project folder and run:
+- php spark serve
 
-## Repository Management
+You should see:
+- CodeIgniter development server started on http://localhost:8080
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+Now open your browser and access your API via:
+- http://localhost:8080
+## Model
+UserModel (app/Models/UserModel.php)
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+- The model interacts with the users table:
 
-## Contributing
+namespace App\Models;
 
-We welcome contributions from the community.
+use CodeIgniter\Model;
 
-Please read the [*Contributing to CodeIgniter*](https://github.com/codeigniter4/CodeIgniter4/blob/develop/CONTRIBUTING.md) section in the development repository.
+class UserModel extends Model
 
-## Server Requirements
+{
+  
+    protected $table = 'users';
+    
+    protected $primaryKey = 'id';
+    
+    protected $allowedFields = ['name','email', 'password'];
+}
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+Key points:
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+$table specifies the database table (users)
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+$primaryKey is id
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+$allowedFields defines which fields can be (name,email and password)
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+## Controller 
+UserController (app/Controllers/UserController.php)
+
+This controller handles all CRUD operations for the users table. The main functions are:
+
+1. index() – List all users
+
+2.getUser() – Get a single user by ID
+- Accepts id as query parameter
+- Returns 400 if ID is missing, 404 if user not found
+- Returns JSON of the user
+
+3.createUser() – Create a new user
+
+- Accepts name, email and password via POST
+- Validation for email and password
+- Hashes password before store in db and minimum password length should be 8
+- Checks for existing email
+- Returns success JSON with new user ID
+
+4.updateUser() – Update a user’s password
+- Accepts email and password via PUT (JSON)
+- Validation for email and password
+- Updates hashed password if user exists
+
+5.deleteUser() – Delete a user by ID
+- Accepts id as query parameter
+- Returns 400 if missing, 404 if user not found
+- Deletes the user and returns a success message
+
+## Routes
+
+Adding the routes for above crud operation
+
+- $routes->get('allusers','UserController::index'); here it will give all users
+- $routes->get('user', 'UserController::getUser');  # here user will get by id from query params   
+- $routes->post('user','UserController::createUser'); # creating new user
+- $routes->put('user/updateuser', 'UserController::updateUser'); # updating user password
+- $routes->delete('user', 'UserController::deleteUser'); # deleting user
+
+## API Testing using Postman
+
+You can test all endpoints using Postman.
+
+Steps:
+Open Postman
+Create a new request
+Select HTTP method (GET, POST, PUT, DELETE)
+Enter URL:
+http://localhost:8080/<endpoint>
+
+1. Get All Users
+Method: GET
+- URL: http://localhost:8080/allusers
+
+2. Get User by Id
+Method: GET
+- URL: http://localhost:8080/user?id=1
+- 
+3. Create User
+Method: POST
+- URL:http://localhost:8080/user
+
+Body → form-data / JSON:
+- name: John
+- email: john@example.com
+- password: 12345678
+
+4. Update Password
+
+Method: PUT
+- Body → raw JSON:
+
+{
+
+  "email": "john@example.com",
+  
+  "password": "john123456"
+  
+}
+
+5.Delete User
+Method: DELETE
+- URL: http://localhost:8080/user?id=1
+
+

@@ -31,13 +31,16 @@ And UserModel.php in app/Models/
 
 5.Configure database in .env and set your database settings:
 - database.default.hostname = localhost
-- database.default.database = csci6040_study
-- database.default.username = root
-- database.default.password = 
+- database.default.database = database
+- database.default.username = username
+- database.default.password = password
 - database.default.DBDriver = MySQLi
 - database.default.DBPrefix =
-- database.default.port = 3306
-
+- database.default.port =3306
+  
+and change this CI_ENVIRONMENT in to development.
+- CI_ENVIRONMENT = development
+  
  CodeIgniter automatically uses these .env settings for database connections. 
  
 6.Run the project using PHP Spark

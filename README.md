@@ -1,4 +1,4 @@
-# CRUD-project-
+# CRUD-project- Codeigniter-4
 CRUD project with REST API using CodeIgniter 4 Framework
 ## 📌 Project Overview
 This project is a **RESTful API** built using **CodeIgniter 4** to perform CRUD operations (Create, Read, Update, Delete) on users table.  
